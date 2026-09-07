@@ -271,8 +271,8 @@ test("an undecided structure keeps corporation obligations conditional", () => {
   }
 });
 
-test("benchmark default answers reproduce their published task graphs", () => {
-  for (const scenario of scenarios.slice(0, 4)) {
+test("all demo defaults reproduce their published task graphs", () => {
+  for (const scenario of scenarios) {
     const recalculated = synthesizeAssessmentScenario({
       ...scenario.profile,
       businessNameUse: "unsure",
@@ -328,6 +328,14 @@ test("boundary answers stop at Expert Review instead of producing a conclusion",
     regulated.tasks.some(({ kind }) => kind === "needs_expert"),
     "boundary journeys must expose an Expert Review task",
   );
+  for (const scenario of [residency, regulated]) {
+    assert.equal(
+      scenario.tasks.some(({ kind }) =>
+        kind === "mandatory" || kind === "conditional" || kind === "optional"),
+      false,
+      `${scenario.id} must not output a definitive applicability conclusion`,
+    );
+  }
 });
 
 test("every scenario task resolves to a maintained task definition", () => {

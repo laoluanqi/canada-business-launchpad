@@ -337,6 +337,16 @@ export function synthesizeAssessmentScenario(
     add("business-banking", "needs_expert");
   }
 
+  const boundary =
+    profile.complexResidency ||
+    profile.industry === "regulated" ||
+    profile.crossProvince;
+  if (boundary) {
+    for (const [id, kind] of taskKinds) {
+      if (kind !== "not_applicable") taskKinds.set(id, "needs_expert");
+    }
+  }
+
   return {
     ...matched,
     title: bi("Your matched Ontario plan", "您的安省匹配计划"),
@@ -348,10 +358,7 @@ export function synthesizeAssessmentScenario(
       "This route preserves your assessment answers and recalculates applicability from those answers.",
       "此路线保留您的问诊回答，并依据这些回答重新计算适用性。",
     ),
-    boundary:
-      profile.complexResidency ||
-      profile.industry === "regulated" ||
-      profile.crossProvince,
+    boundary,
     profile,
     tasks: Array.from(taskKinds, ([id, kind]) => ({ id, kind })),
   };
