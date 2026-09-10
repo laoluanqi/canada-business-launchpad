@@ -6,7 +6,7 @@ const PRESENTATION_KEY = "cbl-presentation:v1";
 test("public-facing Chinese copy uses product and sample language while retaining simulation boundaries", async ({ page }) => {
   for (const path of ["", "/present", "/product", "/demo", "/assessment", "/workspace/toronto-consultant", "/tasks/choose-structure", "/providers", "/calendar", "/assistant", "/support", "/partners", "/admin/rules"]) {
     await page.goto(`/zh${path}`);
-    await expect(page.locator("html[data-launchpad-ready='true']")).toBeVisible();
+    await expect(page.locator(path === "" ? '[data-journey-ready="true"]' : "html[data-launchpad-ready='true']")).toBeVisible();
     await expect(page.locator("body")).not.toContainText("\u6f14\u793a");
   }
   await page.goto("/zh/present?chapter=6");
