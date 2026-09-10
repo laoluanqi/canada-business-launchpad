@@ -1,6 +1,16 @@
 @import "tailwindcss";
+@import "./presentation.css";
+@import "./business.css";
+@import "./launchpad.css";
 
 :root {
+  --lp-green: #075c50;
+  --lp-deep: #073e37;
+  --lp-mint: #e8f3ee;
+  --lp-canvas: #f4f6f5;
+  --lp-text: #183b34;
+  --lp-muted: #586d66;
+  --lp-line: #dce5e0;
   --navy-950: #07172f;
   --navy-900: #0a2040;
   --navy-800: #102e55;
@@ -26,6 +36,8 @@
   --line-dark: #cdd8e6;
   --surface: #ffffff;
   --surface-muted: #f5f8fc;
+  --present-border: #d8e3ef;
+  --present-canvas: #edf2f8;
   --shadow-sm: 0 4px 16px rgba(16, 42, 76, 0.07);
   --shadow-md: 0 14px 40px rgba(10, 32, 64, 0.11);
   --shadow-lg: 0 26px 70px rgba(3, 21, 44, 0.2);

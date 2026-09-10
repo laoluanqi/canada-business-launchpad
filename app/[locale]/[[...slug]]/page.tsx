@@ -1,13 +1,19 @@
 import { LaunchpadApp } from "@/components/LaunchpadApp";
+import { LaunchpadSimple } from "@/components/LaunchpadSimple";
 import { scenarios, tasks } from "@/lib/content";
 import type { Locale } from "@/lib/types";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 const singlePages = new Set([
+  "start",
+  "overview",
   "product",
+  "launch",
+  "present",
   "partners",
   "demo",
   "assessment",
+  "sample-assessment",
   "providers",
   "calendar",
   "assistant",
@@ -35,5 +41,8 @@ export default async function LocalizedPage({
     notFound();
   }
   const locale: Locale = requestedLocale;
+  if (slug.length === 0 || slug[0] === "start") return <LaunchpadSimple locale={locale} />;
+  if (slug[0] === "overview") return <LaunchpadApp locale={locale} path={[]} />;
+  if (slug[0] === "assessment") redirect(`/${locale}/launch?tab=profile`);
   return <LaunchpadApp locale={locale} path={slug} />;
 }

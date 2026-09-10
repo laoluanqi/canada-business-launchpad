@@ -30,6 +30,10 @@ import type {
   TaskStatus,
 } from "@/lib/types";
 import { Icon } from "./Icon";
+import { PresentationPage } from "./PresentationPage";
+import { BusinessWorkspace } from "./BusinessWorkspace";
+import { assessmentDefaults, assessmentQuestions } from "@/lib/assessment";
+import { dependenciesForScenario, phaseLabels, statusFor, summarizeWorkflow, taskIsBlocked } from "@/lib/workflow";
 
 type PageProps = {
   locale: Locale;
@@ -38,12 +42,12 @@ type PageProps = {
 
 const copy = {
   demoStrip: {
-    en: "External Demo MVP v0.1 · Ontario Pilot · General information only",
-    zh: "对外演示MVP v0.1 · 安省试点 · 仅提供一般信息",
+    en: "Product Preview · Ontario Pilot · General information only",
+    zh: "产品预览 · 安省试点 · 仅提供一般信息",
   },
   nav: {
     product: { en: "Product", zh: "产品" },
-    demo: { en: "Demo", zh: "体验" },
+    demo: { en: "Examples", zh: "场景示例" },
     partners: { en: "Partners", zh: "合作" },
     resources: { en: "Resources", zh: "资源" },
   },
@@ -92,8 +96,8 @@ function DemoBadge({
       <span className="pulse-dot" />
       {compact
         ? locale === "en"
-          ? "DEMO · ONTARIO PILOT · GENERAL INFORMATION ONLY"
-          : "演示 · 安省试点 · 仅提供一般信息"
+          ? "PREVIEW · ONTARIO PILOT · GENERAL INFORMATION ONLY"
+          : "产品预览 · 安省试点 · 仅提供一般信息"
         : copy.demoStrip[locale]}
     </span>
   );
@@ -114,7 +118,9 @@ function Header({
     currentPath.length ? `/${currentPath.join("/")}` : "",
   );
   const nav = [
+    ["launch", locale === "en" ? "My workspace" : "我的工作台", "/launch"],
     ["product", copy.nav.product[locale], "/product"],
+    ["present", locale === "en" ? "Presentation" : "产品介绍", "/present"],
     ["demo", copy.nav.demo[locale], "/demo"],
     ["partners", copy.nav.partners[locale], "/partners"],
     ["support", copy.nav.resources[locale], "/support"],
@@ -163,7 +169,7 @@ function Header({
             </a>
             <AppLink
               locale={locale}
-              href="/assessment"
+              href="/launch"
               className="btn btn-primary btn-sm"
             >
               {copy.cta[locale]} <Icon name="arrow" size={16} />
@@ -209,7 +215,10 @@ function Footer({ locale }: { locale: Locale }) {
             {locale === "en" ? "How it works" : "工作方式"}
           </AppLink>
           <AppLink locale={locale} href="/demo">
-            {locale === "en" ? "Demo journeys" : "演示旅程"}
+            {locale === "en" ? "Sample journeys" : "体验旅程"}
+          </AppLink>
+          <AppLink locale={locale} href="/present">
+            {locale === "en" ? "Guided product presentation" : "产品导览"}
           </AppLink>
           <AppLink locale={locale} href="/providers">
             {locale === "en" ? "Service directory" : "服务商目录"}
@@ -240,8 +249,8 @@ function Footer({ locale }: { locale: Locale }) {
         <span>© 2026 Canada Business Launchpad</span>
         <span>
           {locale === "en"
-            ? "Demo data only · No real submissions"
-            : "仅使用演示数据 · 不进行真实提交"}
+            ? "Independent planning · No government submissions"
+            : "独立规划与进度管理 · 不提交政府申请"}
         </span>
       </div>
     </footer>
@@ -283,7 +292,7 @@ function HeroDashboard({ locale }: { locale: Locale }) {
           <span />
           <span />
         </div>
-        <span className="preview-address">launchpad.demo / workspace</span>
+        <span className="preview-address">Launchpad / workspace</span>
         <span className="verified-pill">
           <Icon name="shield" size={12} />{" "}
           {locale === "en" ? "Source verified" : "来源已核验"}
@@ -458,18 +467,18 @@ function HomePage({ locale }: { locale: Locale }) {
             <div className="hero-actions">
               <AppLink
                 locale={locale}
-                href="/assessment"
+                href="/launch"
                 className="btn btn-primary btn-lg"
               >
                 {copy.cta[locale]} <Icon name="arrow" />
               </AppLink>
               <AppLink
                 locale={locale}
-                href="/demo"
+                href="/present"
                 className="btn btn-ghost btn-lg"
               >
                 <span className="play">▶</span>
-                {locale === "en" ? "Explore demo journeys" : "查看演示旅程"}
+                {locale === "en" ? "The product in 6 chapters" : "6个章节，看懂产品"}
               </AppLink>
             </div>
             <div className="trust-row">
@@ -500,7 +509,7 @@ function HomePage({ locale }: { locale: Locale }) {
           />
           <Stat
             value="6"
-            label={locale === "en" ? "Demo journeys" : "演示用户旅程"}
+            label={locale === "en" ? "Sample journeys" : "样例用户旅程"}
           />
           <Stat value="2" label={locale === "en" ? "Languages" : "支持语言"} />
         </div>
@@ -600,10 +609,10 @@ function HomePage({ locale }: { locale: Locale }) {
                 </span>
                 <h3>{l(title, locale)}</h3>
                 <p>{l(description, locale)}</p>
-                <span className="feature-link">
-                  {locale === "en" ? "See it in the demo" : "在演示中查看"}
+                <AppLink locale={locale} href={["/launch?tab=profile", "/launch?tab=plan", "/admin/sources", "/launch?tab=followups"][index]} className="feature-link">
+                  {locale === "en" ? "See it in the preview" : "查看此功能"}
                   <Icon name="arrow" size={16} />
-                </span>
+                </AppLink>
               </article>
             ))}
           </div>
@@ -636,10 +645,10 @@ function HomePage({ locale }: { locale: Locale }) {
                 <p>{l(scenario.descriptor, locale)}</p>
                 <AppLink
                   locale={locale}
-                  href={`/workspace/${scenario.id}`}
+                  href={`/launch?template=${scenario.id}`}
                   className="card-arrow"
                 >
-                  {locale === "en" ? "Open journey" : "打开旅程"}
+                  {locale === "en" ? "Use this starting point" : "以此为起点创建计划"}
                   <Icon name="arrow" size={16} />
                 </AppLink>
               </article>
@@ -749,7 +758,7 @@ function HomePage({ locale }: { locale: Locale }) {
           </div>
           <AppLink
             locale={locale}
-            href="/assessment"
+            href="/launch"
             className="btn btn-gold btn-lg"
           >
             {copy.cta[locale]}
@@ -842,16 +851,16 @@ function ProductPage({ locale }: { locale: Locale }) {
     [
       bi("Clickable now", "当前可点击"),
       bi(
-        "Assessment, task graph, readiness lists, sources, progress, calendar and provider comparison.",
-        "问诊、任务图、就绪清单、来源、进度、日历及服务商比较。",
+        "A private business workspace with a saved plan, preparation checklists, external outcomes, issues, dated periods and activity history.",
+        "独立企业工作台：持续保存计划、材料准备、外部办理结果、待处理问题、日期周期及操作历史。",
       ),
       "now",
     ],
     [
-      bi("Simulated in the demo", "在演示中模拟"),
+      bi("Simulated in the preview", "模拟功能"),
       bi(
-        "Authentication, uploads, external status, email reminders, AI replies and referral receipt.",
-        "登录、上传、外部状态、邮件提醒、AI回答及转介接收。",
+        "Sample journeys and partner receipts remain illustrative. AI explanations use preset answers. The working workspace records your own outcomes, not live external status.",
+        "样例旅程与伙伴接收仍为说明性体验，AI解释使用预置内容。实际工作台保存用户自主记录，而非实时外部状态。",
       ),
       "sim",
     ],
@@ -933,8 +942,8 @@ function ProductPage({ locale }: { locale: Locale }) {
             </div>
             <p>
               {locale === "en"
-                ? "Every capability is labelled so an external audience can distinguish working demo behaviour from future integrations."
-                : "所有能力均明确标注，帮助外部受众区分可用演示和未来集成。"}
+                ? "Every capability is labelled so an external audience can distinguish working preview behaviour from future integrations."
+                : "所有能力均明确标注，帮助外部受众区分当前可用功能与未来集成。"}
             </p>
           </div>
           <div className="boundary-grid">
@@ -1022,17 +1031,17 @@ function ProductPage({ locale }: { locale: Locale }) {
           <div>
             <h2>
               {locale === "en"
-                ? "See the product through a real journey."
-                : "通过真实旅程体验产品。"}
+                ? "Start your own connected plan."
+                : "开始持续推进自己的创业计划。"}
             </h2>
             <p>
               {locale === "en"
-                ? "Choose a benchmark scenario or build a plan from your own answers."
-                : "选择基准画像，或根据您的回答生成计划。"}
+                ? "Create your business workspace, record outcomes and return to the next step."
+                : "创建企业工作台，记录办理结果，回来继续下一步。"}
             </p>
           </div>
-          <AppLink locale={locale} href="/demo" className="btn btn-gold btn-lg">
-            {locale === "en" ? "Open the guided demo" : "打开引导演示"}
+          <AppLink locale={locale} href="/launch" className="btn btn-gold btn-lg">
+            {locale === "en" ? "Open my workspace" : "进入我的工作台"}
             <Icon name="arrow" />
           </AppLink>
         </div>
@@ -1078,8 +1087,8 @@ function ScenarioCard({
               ? "Expert stop"
               : "专家节点"
             : locale === "en"
-              ? "6–8 min demo"
-              : "6–8分钟演示"}
+              ? "6–8 min preview"
+              : "6–8分钟体验"}
         </span>
       </div>
       <AppLink
@@ -1112,19 +1121,19 @@ function DemoPage({
         <div className="shell">
           <DemoBadge locale={locale} compact />
           <span className="eyebrow">
-            {locale === "en" ? "GUIDED PRODUCT DEMO" : "产品引导演示"}
+            {locale === "en" ? "GUIDED PRODUCT TOUR" : "产品导览"}
           </span>
           <h1>
             {locale === "en" ? "Choose a business journey" : "选择一条创业旅程"}
           </h1>
           <p>
             {locale === "en"
-              ? "Each journey uses demo data to show how the same workspace adapts to a different milestone. No account or sensitive information is required."
-              : "每条旅程均使用演示数据，展示同一工作台如何适应不同里程碑。无需账户或敏感信息。"}
+              ? "Each journey uses sample data to show how the same workspace adapts to a different milestone. No account or sensitive information is required."
+              : "每条旅程均使用样例数据，展示同一工作台如何适应不同里程碑。无需账户或敏感信息。"}
           </p>
         </div>
       </section>
-      <section className="section demo-list-section">
+      <section className="section preview-list-section">
         <div className="shell">
           <div className="demo-section-label">
             <span>
@@ -1142,7 +1151,7 @@ function DemoPage({
               />
             ))}
           </div>
-          <div className="demo-section-label boundary-label">
+          <div className="preview-section-label boundary-label">
             <span>
               {locale === "en" ? "Two boundary journeys" : "两条边界旅程"}
             </span>
@@ -1171,14 +1180,14 @@ function DemoPage({
                 </h3>
                 <p>
                   {locale === "en"
-                    ? "Complete the short assessment to create a matched demo plan."
-                    : "完成简短问诊，生成匹配的演示计划。"}
+                    ? "Complete the short assessment to create a matched preview plan."
+                    : "完成简短问诊，生成与企业情况匹配的行动计划。"}
                 </p>
               </div>
             </div>
             <AppLink
               locale={locale}
-              href="/assessment"
+              href="/sample-assessment"
               className="btn btn-primary"
             >
               {locale === "en" ? "Start assessment" : "开始问诊"}
@@ -1191,292 +1200,6 @@ function DemoPage({
   );
 }
 
-type AssessmentQuestion = {
-  id: string;
-  label: LocalizedText;
-  hint: LocalizedText;
-  options: Array<{ value: string | boolean; label: LocalizedText }>;
-  show?: (answers: Record<string, string | boolean>) => boolean;
-};
-
-const assessmentQuestions: AssessmentQuestion[] = [
-  {
-    id: "stage",
-    label: { en: "Where are you today?", zh: "您目前处于哪个阶段？" },
-    hint: {
-      en: "This sets the starting point for your plan.",
-      zh: "这将决定计划的起点。",
-    },
-    options: [
-      { value: "planning", label: { en: "Planning", zh: "筹备中" } },
-      {
-        value: "registered",
-        label: { en: "Registered, not operating", zh: "已注册，尚未经营" },
-      },
-      {
-        value: "operating",
-        label: { en: "Already operating", zh: "已开始经营" },
-      },
-    ],
-  },
-  {
-    id: "registrationStatus",
-    label: {
-      en: "Has the operating business been registered in Ontario?",
-      zh: "正在经营的企业是否已在安省完成注册？",
-    },
-    hint: {
-      en: "Operating activity does not prove registration. Choose not sure if no Ontario BIN or registry record is available.",
-      zh: "已经经营并不等于已经注册。如无法确认Ontario BIN或注册记录，请选择不确定。",
-    },
-    options: [
-      {
-        value: "registered",
-        label: { en: "Registered and recorded", zh: "已注册并有记录" },
-      },
-      {
-        value: "not_registered",
-        label: { en: "Not registered", zh: "尚未注册" },
-      },
-      { value: "unsure", label: { en: "Not sure", zh: "不确定" } },
-    ],
-    show: (a) => a.stage === "operating",
-  },
-  {
-    id: "city",
-    label: { en: "Where will the business operate?", zh: "企业将在哪里经营？" },
-    hint: {
-      en: "The pilot provides a deeper municipal example for Toronto.",
-      zh: "本试点为多伦多提供更深入的市级示例。",
-    },
-    options: [
-      { value: "Toronto", label: { en: "Toronto", zh: "多伦多" } },
-      {
-        value: "Ontario",
-        label: { en: "Elsewhere in Ontario", zh: "安省其他地区" },
-      },
-    ],
-  },
-  {
-    id: "industry",
-    label: {
-      en: "What best describes the activity?",
-      zh: "哪一项最能描述经营活动？",
-    },
-    hint: {
-      en: "Regulated sectors stop at an expert-review boundary.",
-      zh: "受监管行业将在专家审查边界停止。",
-    },
-    options: [
-      {
-        value: "services",
-        label: { en: "Professional or digital services", zh: "专业或数字服务" },
-      },
-      {
-        value: "ecommerce",
-        label: { en: "E-commerce or product sales", zh: "电商或产品销售" },
-      },
-      {
-        value: "regulated",
-        label: {
-          en: "Regulated or premises-heavy activity",
-          zh: "受监管或重场所行业",
-        },
-      },
-    ],
-  },
-  {
-    id: "structure",
-    label: {
-      en: "Which structure are you considering?",
-      zh: "您考虑哪种企业结构？",
-    },
-    hint: {
-      en: "This is planning guidance, not a legal recommendation.",
-      zh: "这属于规划指引，并非法律建议。",
-    },
-    options: [
-      {
-        value: "sole_prop",
-        label: { en: "Sole proprietorship", zh: "个体经营" },
-      },
-      {
-        value: "corporation",
-        label: { en: "Ontario corporation", zh: "安省公司" },
-      },
-      { value: "undecided", label: { en: "Not decided", zh: "尚未决定" } },
-    ],
-  },
-  {
-    id: "businessNameUse",
-    label: {
-      en: "How will the sole proprietorship present its name?",
-      zh: "个体经营将使用什么名称对外经营？",
-    },
-    hint: {
-      en: "Using only your own legal name can change whether Ontario business-name registration is required.",
-      zh: "仅使用本人法定姓名时，安省商业名称注册要求可能不同。",
-    },
-    options: [
-      {
-        value: "legal_name",
-        label: { en: "Only my legal name", zh: "仅使用本人法定姓名" },
-      },
-      {
-        value: "trade_name",
-        label: { en: "A different business name", zh: "使用其他商业名称" },
-      },
-      { value: "unsure", label: { en: "Not sure", zh: "不确定" } },
-    ],
-    show: (a) => a.structure === "sole_prop",
-  },
-  {
-    id: "revenue",
-    label: {
-      en: "Approximate GST/HST-relevant taxable worldwide supplies?",
-      zh: "与GST/HST相关的全球应税供应额大致处于哪个区间？",
-    },
-    hint: {
-      en: "Planning signal only. CRA tests can use one quarter or four consecutive calendar quarters; this band never decides registration by itself.",
-      zh: "仅用于规划。CRA测试可能按单一季度或连续四个日历季度判断；该区间本身不会直接决定注册义务。",
-    },
-    options: [
-      {
-        value: "under_30k",
-        label: { en: "Under CAD 30,000", zh: "低于CAD 30,000" },
-      },
-      {
-        value: "near_30k",
-        label: { en: "Near CAD 30,000", zh: "接近CAD 30,000" },
-      },
-      {
-        value: "over_30k",
-        label: { en: "Over CAD 30,000", zh: "高于CAD 30,000" },
-      },
-    ],
-  },
-  {
-    id: "gstRegistered",
-    label: {
-      en: "Is the business already registered for GST/HST?",
-      zh: "企业是否已经注册GST/HST？",
-    },
-    hint: {
-      en: "Only a confirmed registration makes the return task required in this demo; otherwise the workspace keeps it conditional.",
-      zh: "本演示仅在确认已注册时将申报任务列为必需；其他情况均保留为条件任务。",
-    },
-    options: [
-      { value: "yes", label: { en: "Yes", zh: "是" } },
-      { value: "no", label: { en: "No", zh: "否" } },
-      { value: "unsure", label: { en: "Not sure", zh: "不确定" } },
-    ],
-    show: (a) =>
-      a.stage !== "planning" ||
-      a.revenue === "near_30k" ||
-      a.revenue === "over_30k",
-  },
-  {
-    id: "employees",
-    label: { en: "What is the hiring situation?", zh: "目前的招聘情况？" },
-    hint: {
-      en: "Hiring can trigger payroll, WSIB and workplace tasks.",
-      zh: "招聘可能触发Payroll、WSIB及工作场所任务。",
-    },
-    options: [
-      {
-        value: "none",
-        label: { en: "No employees planned", zh: "暂无员工计划" },
-      },
-      {
-        value: "hiring",
-        label: { en: "Preparing the first hire", zh: "准备招聘首位员工" },
-      },
-      {
-        value: "existing",
-        label: { en: "Already have employees", zh: "已有员工" },
-      },
-    ],
-  },
-  {
-    id: "hasOntarioFacilityOffice",
-    label: {
-      en: "Will the sole proprietorship have an Ontario office or facility?",
-      zh: "该个体经营是否会在安省设有办公室或经营设施？",
-    },
-    hint: {
-      en: "Employees, facilities or offices in Ontario can make Ontario registration required even when a legal name is used.",
-      zh: "即使仅使用法定姓名，在安省有员工、设施或办公室也可能必须注册。",
-    },
-    options: [
-      { value: "yes", label: { en: "Yes", zh: "是" } },
-      { value: "no", label: { en: "No", zh: "否" } },
-      { value: "unsure", label: { en: "Not sure", zh: "不确定" } },
-    ],
-    show: (a) => a.structure === "sole_prop" && a.employees === "none",
-  },
-  {
-    id: "imports",
-    label: {
-      en: "Will you import commercial goods?",
-      zh: "是否进口商业货物？",
-    },
-    hint: {
-      en: "Commercial importing can require CARM and an import-export account.",
-      zh: "商业进口可能需要CARM及进出口账户。",
-    },
-    options: [
-      { value: true, label: { en: "Yes or likely", zh: "是或可能" } },
-      { value: false, label: { en: "No", zh: "否" } },
-    ],
-  },
-  {
-    id: "crossProvince",
-    label: {
-      en: "Is there complex extra-provincial activity?",
-      zh: "是否存在复杂跨省经营？",
-    },
-    hint: {
-      en: "The Ontario pilot routes complex cases to review.",
-      zh: "安省试点会将复杂案例转交审查。",
-    },
-    options: [
-      { value: true, label: { en: "Yes or unsure", zh: "是或不确定" } },
-      { value: false, label: { en: "No", zh: "否" } },
-    ],
-  },
-  {
-    id: "complexResidency",
-    label: {
-      en: "Do all directors or controlling owners appear to be outside Canada?",
-      zh: "全部董事或控制人是否可能位于加拿大境外？",
-    },
-    hint: {
-      en: "Residency is a rule variable—not the target market. Do not enter names or ID details.",
-      zh: "居住地是规则变量，而非目标市场。请勿输入姓名或证件信息。",
-    },
-    options: [
-      { value: true, label: { en: "Yes or unsure", zh: "是或不确定" } },
-      { value: false, label: { en: "No", zh: "否" } },
-    ],
-    show: (a) => a.structure === "corporation" || a.structure === "undecided",
-  },
-];
-
-const assessmentDefaults: Record<string, string | boolean> = {
-  stage: "planning",
-  registrationStatus: "unsure",
-  city: "Toronto",
-  industry: "services",
-  structure: "sole_prop",
-  businessNameUse: "unsure",
-  revenue: "under_30k",
-  gstRegistered: "unsure",
-  employees: "none",
-  hasOntarioFacilityOffice: "no",
-  imports: false,
-  crossProvince: false,
-  complexResidency: false,
-};
 
 function assessmentAnswersForState(
   state: DemoState,
@@ -1634,8 +1357,8 @@ function AssessmentPage({
               <Icon name="lock" />
               <p>
                 {locale === "en"
-                  ? "Answers stay in this browser as demo data. Nothing is submitted to government or partners."
-                  : "回答仅作为演示数据保存在此浏览器中，不会提交给政府或合作方。"}
+                  ? "Answers stay in this browser as sample data. Nothing is submitted to government or partners."
+                  : "回答仅作为样例数据保存在此浏览器中，不会提交给政府或合作方。"}
               </p>
             </div>
             <button className="btn btn-primary full" onClick={submit}>
@@ -1678,6 +1401,7 @@ function WorkspaceNav({
   active: string;
 }) {
   const items = [
+    ["present", "route", locale === "en" ? "Presentation" : "产品介绍", "/present"],
     [
       "workspace",
       "chart",
@@ -1723,7 +1447,7 @@ function WorkspaceNav({
         </span>
         <div>
           <b>Launchpad</b>
-          <small>{locale === "en" ? "Demo workspace" : "演示工作台"}</small>
+          <small>{locale === "en" ? "Preview workspace" : "体验工作台"}</small>
         </div>
       </div>
       <nav>
@@ -1741,7 +1465,7 @@ function WorkspaceNav({
       </nav>
       <div className="workspace-demo-note">
         <Icon name="lock" />
-        <b>{locale === "en" ? "Demo data only" : "仅演示数据"}</b>
+        <b>{locale === "en" ? "Sample data only" : "仅样例数据"}</b>
         <span>
           {locale === "en" ? "Stored in this browser" : "保存在此浏览器"}
         </span>
@@ -1772,9 +1496,9 @@ function WorkspaceTopbar({
           {locale === "en" ? "Switch journey" : "切换旅程"}
         </AppLink>
         <button
-          aria-label={locale === "en" ? "Reset demo data" : "重置演示数据"}
+          aria-label={locale === "en" ? "Reset sample data" : "重置样例数据"}
           className="icon-button"
-          title={locale === "en" ? "Reset demo" : "重置演示"}
+          title={locale === "en" ? "Reset preview" : "重置体验"}
           onClick={onReset}
         >
           <Icon name="reset" size={18} />
@@ -1795,17 +1519,6 @@ function WorkspaceTopbar({
   );
 }
 
-function statusFor(
-  state: DemoState,
-  scenario: DemoScenario,
-  taskId: string,
-  kind: TaskKind,
-): TaskStatus {
-  if (kind === "needs_expert") return "needs_expert";
-  if (kind === "not_applicable") return "not_applicable";
-  return state.taskStatus[`${scenario.id}:${taskId}`] ?? "not_started";
-}
-
 const workflowRiskLabels: Record<
   NonNullable<TaskDefinition["workflowRisk"]>,
   LocalizedText
@@ -1815,34 +1528,6 @@ const workflowRiskLabels: Record<
   high: bi("High if delayed", "延误风险较高"),
   expert: bi("Expert review", "专家审查"),
 };
-
-function dependenciesForScenario(
-  task: TaskDefinition,
-  scenario: DemoScenario,
-) {
-  return (task.dependsOn ?? [])
-    .map((id) => ({ definition: getTask(id), instance: scenario.tasks.find((x) => x.id === id) }))
-    .filter(
-      (
-        value,
-      ): value is {
-        definition: TaskDefinition;
-        instance: { id: string; kind: TaskKind };
-      } => Boolean(value.definition && value.instance),
-    );
-}
-
-function taskIsBlocked(
-  state: DemoState,
-  scenario: DemoScenario,
-  task: TaskDefinition,
-) {
-  return dependenciesForScenario(task, scenario).some(
-    ({ instance }) =>
-      instance.kind !== "not_applicable" &&
-      statusFor(state, scenario, instance.id, instance.kind) !== "done",
-  );
-}
 
 function resolveScenario(state: DemoState, requestedId?: string): DemoScenario {
   const id = requestedId ?? state.activeScenarioId;
@@ -1897,43 +1582,20 @@ function WorkspacePage({
     );
     return () => window.cancelAnimationFrame(frame);
   }, [commit, hydrated, scenario.id, state]);
-  const entries = scenario.tasks
-    .map((item) => ({ ...item, task: getTask(item.id)! }))
-    .filter((x) => x.task);
+  const workflow = summarizeWorkflow(state, scenario);
+  const { entries, active, done, progress, next } = workflow;
   const scenarioEvents = calendarForScenario(scenario);
-  const active = entries.filter(
-    (x) => x.kind !== "optional" && x.kind !== "not_applicable",
-  );
-  const done = active.filter(
-    (x) => statusFor(state, scenario, x.id, x.kind) === "done",
-  ).length;
-  const progress = Math.round((done / Math.max(active.length, 1)) * 100);
-  const next =
-    entries.find(
-      (x) =>
-        x.kind !== "not_applicable" &&
-        !["done", "not_applicable"].includes(
-          statusFor(state, scenario, x.id, x.kind),
-        ) &&
-        !taskIsBlocked(state, scenario, x.task),
-    ) ??
-    entries.find(
-      (x) =>
-        x.kind !== "not_applicable" &&
-        !["done", "not_applicable"].includes(
-          statusFor(state, scenario, x.id, x.kind),
-        ),
-    ) ??
-    entries[0];
   const [filter, setFilter] = useState<"all" | TaskKind>("all");
-  const visible =
-    filter === "all" ? entries : entries.filter((x) => x.kind === filter);
+  const [phaseFilter, setPhaseFilter] = useState("all");
+  const visible = entries.filter((item) =>
+    (filter === "all" || item.kind === filter) && (phaseFilter === "all" || item.task.phase === phaseFilter),
+  );
   const reset = () => {
     if (
       window.confirm(
         locale === "en"
-          ? "Reset all local demo progress?"
-          : "重置全部本地演示进度？",
+          ? "Reset all local preview progress?"
+          : "重置全部本地体验进度？",
       )
     ) {
       commit(demoRepository.reset());
@@ -1958,7 +1620,7 @@ function WorkspacePage({
                   : "您的安省创业工作台"}
               </span>
               <h1>
-                {locale === "en" ? "Good morning, Alex." : "早上好，Alex。"}
+                {locale === "en" ? "Your next milestone." : "您的下一里程碑。"}
               </h1>
               <p>{l(scenario.outcome, locale)}</p>
             </div>
@@ -1975,8 +1637,8 @@ function WorkspacePage({
                 </b>
                 <p>
                   {locale === "en"
-                    ? "The demo intentionally stops before giving a definitive legal, tax, licensing or residency conclusion."
-                    : "演示会在给出确定性法律、税务、许可或居住地结论前停止。"}
+                    ? "The preview intentionally stops before giving a definitive legal, tax, licensing or residency conclusion."
+                    : "超出适用范围的事项将转交专业人士，不作确定性法律、税务、许可或居住地结论。"}
                 </p>
               </div>
               <AppLink
@@ -2054,6 +1716,11 @@ function WorkspacePage({
               </div>
             </article>
           </section>
+          <section className="milestone-map" aria-label={locale === "en" ? "Plan stages" : "计划阶段"}>
+            {workflow.phases.map((phase) => <button key={phase.id} aria-pressed={phaseFilter === phase.id} onClick={() => setPhaseFilter(phaseFilter === phase.id ? "all" : phase.id)}><span>{phase.label[locale]}</span><b>{phase.done}/{phase.total}</b><span className="milestone-track"><i style={{ width: `${phase.total ? phase.done / phase.total * 100 : 0}%` }} /></span></button>)}
+          </section>
+          {workflow.waiting.length > 0 && <section className="workflow-waiting"><div><Icon name="clock" /><h2>{locale === "en" ? "Waiting outside Launchpad" : "在平台外等待处理"}</h2></div><p>{locale === "en" ? "User-recorded status, not a live government feed. Other ready tasks can continue." : "这是用户记录的状态，不是政府实时回传；其他已就绪任务仍可继续。"}</p>{workflow.waiting.map((item) => <AppLink key={item.id} locale={locale} href={`/tasks/${item.id}#evidence`}><span>{item.task.title[locale]}</span>{locale === "en" ? "Record an update" : "回填进展"}<Icon name="arrow" size={16} /></AppLink>)}</section>}
+          {!next && <section className="workflow-outcome" role="status"><Icon name={workflow.complete ? "check" : "clock"} /><div><h2>{workflow.complete ? (locale === "en" ? "Your active plan is marked complete." : "当前计划已全部自报完成。") : (locale === "en" ? "No task is ready to advance right now." : "当前暂无可直接推进的任务。")}</h2><p>{workflow.complete ? (locale === "en" ? "These are unverified user records. Review ongoing obligations and update the plan if your facts change." : "这些是未经核验的用户记录。请复核持续义务，经营情况变化时更新计划。") : (locale === "en" ? "Check external waiting and prerequisite tasks below. No application has been automatically approved." : "请检查外部等待及前置任务，没有任何申请被自动批准。")}</p><AppLink locale={locale} href="/calendar" className="text-link">{locale === "en" ? "Review the calendar" : "查看合规日历"}<Icon name="arrow" size={16} /></AppLink></div></section>}
           {next && (
             <section className="next-action-card">
               <div className="next-action-top">
@@ -2079,11 +1746,7 @@ function WorkspacePage({
                   <h2>{l(next.task.title, locale)}</h2>
                   <p>{l(next.task.summary, locale)}</p>
                   <div className="next-detail-row">
-                    <span>
-                      <Icon name="file" size={16} />
-                      {next.task.materials?.length ?? 3}{" "}
-                      {locale === "en" ? "materials to review" : "项材料需核对"}
-                    </span>
+                    <span><Icon name="file" size={16} />{next.task.materials ? `${next.task.materials.length} ${locale === "en" ? "materials to review" : "项材料需核对"}` : locale === "en" ? "Preparation summary" : "准备事项概览"}</span>
                     <span>
                       <Icon name="clock" size={16} />
                       {next.task.timing
@@ -2112,6 +1775,7 @@ function WorkspacePage({
             </section>
           )}
           <section className="task-section" id="plan">
+            {phaseFilter !== "all" && <div className="phase-filter-note"><span>{locale === "en" ? "Showing stage:" : "当前阶段："} {phaseLabels[phaseFilter as keyof typeof phaseLabels][locale]}</span><button className="text-link" onClick={() => setPhaseFilter("all")}>{locale === "en" ? "Show all stages" : "显示全部阶段"}</button></div>}
             <div className="task-section-head">
               <div>
                 <h2>{locale === "en" ? "Your launch plan" : "您的创业计划"}</h2>
@@ -2153,6 +1817,7 @@ function WorkspacePage({
                 <span>{locale === "en" ? "Status" : "状态"}</span>
                 <span />
               </div>
+              {visible.length === 0 && <p className="workflow-empty">{locale === "en" ? "No tasks match both filters. Change the applicability or clear the stage filter." : "当前适用性和阶段筛选下暂无任务，请修改筛选或显示全部阶段。"}</p>}
               {visible.map(({ task, kind }) => {
                 const status = statusFor(state, scenario, task.id, kind);
                 const dependencies = dependenciesForScenario(task, scenario);
@@ -2253,6 +1918,7 @@ function WorkspacePage({
               })}
             </div>
           </section>
+          <section className="workflow-records" id="evidence"><h2>{locale === "en" ? "Your recorded milestones" : "已记录的里程碑"}</h2><p>{locale === "en" ? "Preview text only. User-marked completion is not government verification." : "仅记录样例文本。用户自报完成不代表政府核验。"}</p>{entries.filter((item) => item.status === "done").length === 0 ? <p className="workflow-empty">{locale === "en" ? "Complete a task and record a sample reference to see the handoff come back here." : "完成任务并记录样例参考号后，可在这里查看接力结果。"}</p> : entries.filter((item) => item.status === "done").map((item) => <AppLink key={item.id} locale={locale} href={`/tasks/${item.id}#evidence`}><Icon name="check" size={18} /><span><b>{item.task.title[locale]}</b><small>{state.evidence[`${scenario.id}:${item.id}`]?.reference ?? (locale === "en" ? "Marked complete without a reference" : "已标记完成，未附参考号")}</small></span><Icon name="chevron" size={18} /></AppLink>)}</section>
           <section className="workspace-bottom-grid">
             <article className="upcoming-card">
               <div className="widget-head">
@@ -2303,7 +1969,7 @@ function WorkspacePage({
                     </small>
                   </span>
                 </div>
-                <AppLink locale={locale} href="/assessment">
+                <AppLink locale={locale} href="/sample-assessment">
                   {locale === "en" ? "Edit" : "修改"}
                   <Icon name="arrow" size={14} />
                 </AppLink>
@@ -2346,11 +2012,13 @@ function TaskPage({
   locale,
   taskId,
   state,
+  hydrated,
   commit,
 }: {
   locale: Locale;
   taskId: string;
   state: DemoState;
+  hydrated: boolean;
   commit: (state: DemoState) => void;
 }) {
   const task = getTask(taskId) ?? tasks[0];
@@ -2387,19 +2055,21 @@ function TaskPage({
   const workflowRisk =
     kind === "needs_expert" ? "expert" : (task.workflowRisk ?? "medium");
   const actionLocked =
-    kind === "not_applicable" || kind === "needs_expert" || blocked;
+    !hydrated || kind === "not_applicable" || kind === "needs_expert" || blocked;
   const save = () => {
     if (actionLocked || (!reference && !fileName)) return;
     commit(
       demoRepository.saveEvidence(state, scenario.id, {
         taskId: task.id,
-        reference: reference || "DEMO-REFERENCE",
+        reference: reference || "SAMPLE-REFERENCE",
         fileName: fileName || "No file recorded",
         completedAt: new Date().toISOString(),
       }),
     );
     setSaved(true);
   };
+  const workflow = summarizeWorkflow(state, scenario);
+  const recordedEvidence = state.evidence[`${scenario.id}:${task.id}`];
   return (
     <div className="workspace-layout">
       <WorkspaceNav locale={locale} scenarioId={scenario.id} active="plan" />
@@ -2456,8 +2126,8 @@ function TaskPage({
               <div>
                 <b>
                   {locale === "en"
-                    ? "No action is required for the current demo facts"
-                    : "根据当前演示事实，无需执行此任务"}
+                    ? "No action is required for the current sample facts"
+                    : "根据当前样例情况，无需执行此任务"}
                 </b>
                 <p>
                   {locale === "en"
@@ -2484,6 +2154,16 @@ function TaskPage({
               </div>
             </div>
           )}
+          <p className="handoff-state-note">{locale === "en" ? "Current recorded indicators, not an application history. Waiting is optional; completion never implies earlier external submission." : "以下是当前记录状态，不是申请历史。等待为可选状态，完成不代表此前已向外部提交。"}</p>
+          <section className="task-handoff-strip" aria-label={locale === "en" ? "Recorded handoff indicators" : "办理接力记录状态"}>
+            {[
+              [locale === "en" ? "Prepare materials" : "准备材料", materialsReady],
+              [locale === "en" ? "Ready for external service" : "可前往外部服务", materialsReady && !actionLocked],
+              [locale === "en" ? "Currently waiting externally" : "当前外部等待", status === "external_pending"],
+              [locale === "en" ? "User-recorded completion" : "用户回填完成", status === "done"],
+            ].map(([label, reached], index) => <div key={String(label)} className={reached ? "reached" : ""}><span>{index + 1}</span><b>{label}</b></div>)}
+          </section>
+          {status === "done" && <section className="workflow-outcome" role="status"><Icon name="check" /><div><span className="eyebrow">{locale === "en" ? "MILESTONE RECORDED · UNVERIFIED" : "里程碑已记录 · 未经核验"}</span><h2>{locale === "en" ? "Your plan can keep moving." : "这一步已记录，计划可以继续。"}</h2><p>{recordedEvidence?.reference ?? (locale === "en" ? "User-marked completion" : "用户自报完成")} · {workflow.done}/{workflow.active.length} {locale === "en" ? "active plan items recorded" : "项当前计划已记录完成"}</p><div className="outcome-actions"><AppLink locale={locale} href={workflow.next ? `/tasks/${workflow.next.id}` : "/calendar"} className="btn btn-primary btn-sm">{workflow.next ? workflow.next.task.shortTitle[locale] : locale === "en" ? "Review ongoing obligations" : "复核持续义务"}<Icon name="arrow" size={16} /></AppLink><AppLink locale={locale} href={`/workspace/${scenario.id}#evidence`} className="text-link">{locale === "en" ? "See milestone in workspace" : "在工作台查看里程碑"}</AppLink></div></div></section>}
           <div className="task-detail-grid">
             <div className="task-detail-main">
               <section className="detail-card">
@@ -2522,7 +2202,7 @@ function TaskPage({
                     <label key={material.en}>
                       <input
                         type="checkbox"
-                        disabled={kind === "not_applicable"}
+                        disabled={!hydrated || kind === "not_applicable"}
                         checked={Boolean(materialChecks[index])}
                         onChange={(event) =>
                           commit(
@@ -2660,20 +2340,21 @@ function TaskPage({
                   <Icon name="alert" />
                   <span>
                     {locale === "en"
-                      ? "You are leaving this demo. Review the third party’s current terms, privacy notice and fees."
-                      : "您即将离开本演示。请查看第三方最新条款、隐私声明及费用。"}
+                      ? "You are leaving this preview. Review the third party’s current terms, privacy notice and fees."
+                      : "您即将离开本预览。请查看第三方最新条款、隐私声明及费用。"}
                   </span>
                 </div>
               </section>
               <section className="detail-card" id="evidence">
+                <div className="handoff-record-actions"><h3>{locale === "en" ? "Back from the external service?" : "从外部服务返回了吗？"}</h3><p>{locale === "en" ? "Opening a link does not mean an application was submitted. Record external waiting only when it reflects your current sample workflow." : "打开链接不代表已提交申请，请根据当前办理情况明确记录外部等待。"}</p><button className="btn btn-outline btn-sm" disabled={actionLocked || !materialsReady || status === "done" || status === "external_pending"} onClick={() => commit(demoRepository.updateTask(state, scenario.id, task.id, "external_pending"))}><Icon name="clock" size={16} />{status === "external_pending" ? locale === "en" ? "External waiting recorded" : "已记录外部等待" : locale === "en" ? "Record external waiting" : "记录外部等待"}</button>{status === "external_pending" && <button className="text-link" onClick={() => commit(demoRepository.updateTask(state, scenario.id, task.id, "in_progress"))}>{locale === "en" ? "More preparation needed" : "仍需补充准备"}</button>}</div>
                 <span className="detail-card-label">
                   <Icon name="check" />
                   {locale === "en" ? "RECORD COMPLETION" : "记录完成情况"}
                 </span>
                 <h2>
                   {locale === "en"
-                    ? "Save a safe demo reference"
-                    : "保存安全的演示参考信息"}
+                    ? "Save a safe sample reference"
+                    : "保存安全的样例参考信息"}
                 </h2>
                 <p>
                   {locale === "en"
@@ -2681,22 +2362,23 @@ function TaskPage({
                     : "请勿输入SIN、BN、税务账户、Company Key、政府密码、银行信息或真实回执。"}
                 </p>
                 <div className="evidence-form">
+                  <button className="btn btn-outline btn-sm" disabled={actionLocked} onClick={() => { setReference("SAMPLE-2026-001"); setFileName("sample-confirmation.pdf"); setSaved(false); }}>{locale === "en" ? "Use safe sample data" : "填入安全样例"}<Icon name="spark" size={16} /></button>
                   <label>
                     <span>
-                      {locale === "en" ? "Demo reference" : "演示参考号"}
+                      {locale === "en" ? "Sample reference" : "样例参考号"}
                     </span>
                     <input
                       value={reference}
                       disabled={actionLocked}
                       onChange={(e) => setReference(e.target.value)}
-                      placeholder="DEMO-2026-001"
+                      placeholder="SAMPLE-2026-001"
                     />
                   </label>
                   <label>
                     <span>
                       {locale === "en"
-                        ? "Demo filename (text only)"
-                        : "演示文件名（仅文本）"}
+                        ? "Sample filename (text only)"
+                        : "样例文件名（仅文本）"}
                     </span>
                     <input
                       value={fileName}
@@ -2833,8 +2515,8 @@ function TaskPage({
                 <h3>{locale === "en" ? "Need help?" : "需要帮助？"}</h3>
                 <p>
                   {locale === "en"
-                    ? "Prepare a focused expert handoff without sharing sensitive information in this demo."
-                    : "在本演示中准备聚焦的专家转交，无需分享敏感信息。"}
+                    ? "Prepare a focused expert handoff without sharing sensitive information in this preview."
+                    : "在本预览中准备聚焦的专家转交，无需分享敏感信息。"}
                 </p>
                 <AppLink
                   locale={locale}
@@ -2910,8 +2592,8 @@ function CalendarPage({ locale, state, commit }: { locale: Locale; state: DemoSt
               </h1>
               <p>
                 {locale === "en"
-                  ? "Illustrative reminders based on a demo fiscal year. Launchpad does not file or calculate final due dates."
-                  : "基于演示财年的示例提醒。Launchpad不负责提交，也不计算最终截止日期。"}
+                  ? "Illustrative reminders based on a sample fiscal year. Launchpad does not file or calculate final due dates."
+                  : "基于样例财年的示例提醒。Launchpad不负责提交，也不计算最终截止日期。"}
               </p>
             </div>
             <DemoBadge locale={locale} compact />
@@ -3059,8 +2741,8 @@ function ProviderType({
   const labels = {
     official: { en: "Official", zh: "官方" },
     independent: { en: "Independent", zh: "独立" },
-    demo_partner: { en: "Demo partner", zh: "演示伙伴" },
-    sponsored: { en: "Sponsored demo", zh: "赞助位演示" },
+    demo_partner: { en: "Simulated partner", zh: "模拟伙伴" },
+    sponsored: { en: "Simulated sponsorship", zh: "模拟赞助位" },
   };
   return (
     <span className={`provider-type ${type}`}>{l(labels[type], locale)}</span>
@@ -3187,8 +2869,8 @@ function ProvidersPage({
               </b>
               <p>
                 {locale === "en"
-                  ? "Names marked as demo or sponsored are fictional. Any future compensation would be disclosed beside the action."
-                  : "标注为演示或赞助的名称均为虚构。未来任何报酬都会在操作入口旁披露。"}
+                  ? "Names marked as preview or sponsored are fictional. Any future compensation would be disclosed beside the action."
+                  : "标注为模拟伙伴或赞助的名称均为虚构。未来任何报酬都会在操作入口旁披露。"}
               </p>
             </div>
           </div>
@@ -3283,7 +2965,7 @@ function ProvidersPage({
                         setConsent(false);
                       }}
                     >
-                      {locale === "en" ? "Review demo handoff" : "查看演示转介"}
+                      {locale === "en" ? "Review simulated handoff" : "查看模拟转介"}
                       <Icon name="arrow" size={16} />
                     </button>
                   )}
@@ -3318,7 +3000,7 @@ function ProvidersPage({
                   {locale === "en" ? "SIMULATED RECEIPT" : "模拟接收"}
                 </small>
                 <h2 id="referral-modal-title">
-                  {locale === "en" ? "Demo handoff received" : "演示转介已接收"}
+                  {locale === "en" ? "Simulated handoff received" : "模拟转介已接收"}
                 </h2>
                 <p>
                   {locale === "en"
@@ -3344,8 +3026,8 @@ function ProvidersPage({
                 <div className="share-box">
                   <small>
                     {locale === "en"
-                      ? "DEMO FIELDS THAT WOULD BE SHARED"
-                      : "将共享的演示字段"}
+                      ? "SAMPLE FIELDS THAT WOULD BE SHARED"
+                      : "将共享的样例字段"}
                   </small>
                   {selected.sharedFields.map((field) => (
                     <span key={field.en}>
@@ -3356,7 +3038,7 @@ function ProvidersPage({
                   <p>
                     {locale === "en"
                       ? "Use a fictional contact email in this demonstration. Do not enter client data."
-                      : "演示中请使用虚构联系邮箱，不要输入客户数据。"}
+                      : "体验时请使用虚构联系邮箱，不要输入客户数据。"}
                   </p>
                 </div>
                 {selected.commercialDisclosure && (
@@ -3373,8 +3055,8 @@ function ProvidersPage({
                   />
                   <span>
                     {locale === "en"
-                      ? "I understand this is a simulation and consent to creating a local demo record."
-                      : "我理解这是模拟操作，并同意创建本地演示记录。"}
+                      ? "I understand this is a simulation and consent to creating a local sample record."
+                      : "我理解这是模拟操作，并同意创建本地样例记录。"}
                   </span>
                 </label>
                 <button
@@ -3436,8 +3118,8 @@ function AssistantPage({
               </h1>
               <p>
                 {locale === "en"
-                  ? "Select a common question to see a deterministic, source-backed response. No live model is used in this demo."
-                  : "选择常见问题，查看确定且附来源的回答。本演示不调用实时模型。"}
+                  ? "Select a common question to see a deterministic, source-backed response. No live model is used in this preview."
+                  : "选择常见问题，查看确定且附来源的回答。本预览不调用实时模型。"}
               </p>
             </div>
             <DemoBadge locale={locale} compact />
@@ -3531,13 +3213,13 @@ function AssistantPage({
                   readOnly
                   aria-label={
                     locale === "en"
-                      ? "Free-form assistant input disabled in demo"
-                      : "演示中已禁用自由提问输入"
+                      ? "Free-form assistant input disabled in preview"
+                      : "当前仅支持预置问题，不接收自由提问"
                   }
                   placeholder={
                     locale === "en"
-                      ? "Live free-form questions are disabled in this demo"
-                      : "本演示未启用实时自由提问"
+                      ? "Live free-form questions are disabled in this preview"
+                      : "本预览未启用实时自由提问"
                   }
                 />
                 <button
@@ -3582,7 +3264,7 @@ function PartnersPage({ locale }: { locale: Locale }) {
               href="/providers"
               className="btn btn-gold btn-lg"
             >
-              {locale === "en" ? "See the handoff demo" : "查看转介演示"}
+              {locale === "en" ? "See the handoff preview" : "查看转介流程"}
               <Icon name="arrow" />
             </AppLink>
           </div>
@@ -3674,8 +3356,8 @@ function PartnersPage({ locale }: { locale: Locale }) {
             </h2>
             <p>
               {locale === "en"
-                ? "The demo assumes no partner relationships. A live listing needs documented authority, data handling and commercial terms."
-                : "本演示不假设任何合作关系。真实展示需要书面授权、数据处理及商业条款。"}
+                ? "The preview assumes no partner relationships. A live listing needs documented authority, data handling and commercial terms."
+                : "本预览不假设任何合作关系。真实展示需要书面授权、数据处理及商业条款。"}
             </p>
           </div>
           <ul className="check-list numbered">
@@ -3711,8 +3393,8 @@ function PartnersPage({ locale }: { locale: Locale }) {
           <div>
             <h2>
               {locale === "en"
-                ? "Review the external demo together."
-                : "共同评审对外演示。"}
+                ? "Review the external preview together."
+                : "共同评审对外展示。"}
             </h2>
             <p>
               {locale === "en"
@@ -3772,16 +3454,16 @@ function SupportPage({
               </span>
               <h2>
                 {locale === "en"
-                  ? "What this demo does—and does not do"
-                  : "本演示能做什么、不能做什么"}
+                  ? "What this preview does—and does not do"
+                  : "本预览能做什么、不能做什么"}
               </h2>
               <div className="faq-list">
                 {[
                   [
                     "Does Launchpad submit registrations or tax returns?",
-                    "Launchpad prepares and tracks the journey. Official or qualified third-party services complete submissions; the demo does not transmit data.",
+                    "Launchpad prepares and tracks the journey. The personal workspace saves business answers and progress on this service. Government or professional services handle external submissions; we do not transmit your records to them.",
                     "Launchpad会提交注册或税务申报吗？",
-                    "Launchpad帮助准备和跟踪流程。提交由官方或合格第三方服务完成；本演示不传输数据。",
+                    "Launchpad帮助准备和跟踪流程。个人工作台将企业情况与进度保存在本服务端；外部提交由政府或专业服务完成，我们不向其传输您的记录。",
                   ],
                   [
                     "Is this only for non-residents?",
@@ -3790,9 +3472,9 @@ function SupportPage({
                     "不是。目标用户是广泛的安省小企业创业者；仅在居住地可能改变路径或触发专家审查时询问。",
                   ],
                   [
-                    "Where is my demo data stored?",
+                    "Where is my sample data stored?",
                     "Assessment answers, task statuses and simulated records stay in this browser's local storage until you reset them.",
-                    "演示数据保存在哪里？",
+                    "样例数据保存在哪里？",
                     "问诊回答、任务状态及模拟记录保存在此浏览器的本地存储中，直至您重置。",
                   ],
                   [
@@ -3825,24 +3507,24 @@ function SupportPage({
                 {[
                   [
                     "lock",
-                    "No sensitive demo fields",
-                    "不设置敏感演示字段",
+                    "No sensitive sample fields",
+                    "不设置敏感样例字段",
                     "No SIN, passport, bank, tax-form, government-password or Company Key fields.",
                     "不设置SIN、护照、银行、税表、政府密码或Company Key字段。",
                   ],
                   [
                     "database",
-                    "Browser-local state",
-                    "浏览器本地状态",
-                    "The prototype has no customer database, live file vault or production authentication.",
-                    "原型没有客户数据库、真实文件库或生产级身份系统。",
+                    "Separate working and sample data",
+                    "区分实际工作台与样例数据",
+                    "The personal workspace uses a service-side database and a browser access cookie. There is no file vault, account recovery or cross-device sign-in. Sample journeys remain separate browser-only examples.",
+                    "个人工作台使用服务端数据库和浏览器访问Cookie，暂不支持文件库、账户找回或跨设备登录。样例旅程仍使用独立的浏览器本地数据。",
                   ],
                   [
                     "users",
                     "Consent before sharing",
                     "共享前取得同意",
-                    "The provider demo shows every shared field before creating a local referral record.",
-                    "服务商演示会在创建本地转介记录前显示所有共享字段。",
+                    "The provider preview shows every shared field before creating a local referral record.",
+                    "创建本地模拟转介记录前，会列明拟共享的全部字段。",
                   ],
                 ].map(([icon, en, zh, descEn, descZh]) => (
                   <div key={en}>
@@ -3866,14 +3548,14 @@ function SupportPage({
             </h2>
             <p>
               {locale === "en"
-                ? "Create a demo support request using categories only. Do not enter names, identifiers or case details."
-                : "仅使用问题类别创建演示支持请求。请勿输入姓名、标识符或个案详情。"}
+                ? "Create a preview support request using categories only. Do not enter names, identifiers or case details."
+                : "仅使用问题类别创建模拟支持请求。请勿输入姓名、标识符或个案详情。"}
             </p>
             {submitted ? (
               <div className="support-success">
                 <Icon name="check" size={28} />
                 <b>
-                  {locale === "en" ? "Demo request prepared" : "演示请求已准备"}
+                  {locale === "en" ? "Sample request prepared" : "模拟请求已准备"}
                 </b>
                 <span>
                   {locale === "en"
@@ -3918,8 +3600,8 @@ function SupportPage({
                   />
                   <span>
                     {locale === "en"
-                      ? "I understand this is a non-transmitting demo."
-                      : "我理解这是不会发送数据的演示。"}
+                      ? "I understand this is a non-transmitting preview."
+                      : "我理解这是不会发送数据的模拟操作。"}
                   </span>
                 </label>
                 <button
@@ -3927,7 +3609,7 @@ function SupportPage({
                   disabled={!consent}
                   onClick={() => setSubmitted(true)}
                 >
-                  {locale === "en" ? "Prepare demo request" : "准备演示请求"}
+                  {locale === "en" ? "Prepare sample request" : "准备模拟请求"}
                   <Icon name="arrow" />
                 </button>
               </>
@@ -3957,7 +3639,7 @@ function SupportPage({
             onClick={() => commit(demoRepository.reset())}
           >
             <Icon name="reset" />
-            {locale === "en" ? "Reset local demo data" : "重置本地演示数据"}
+            {locale === "en" ? "Reset local sample data" : "重置本地样例数据"}
           </button>
         </div>
       </section>
@@ -4109,7 +3791,7 @@ function AdminPage({
           ))}
           <div className="workspace-demo-note">
             <Icon name="database" />
-            <b>{locale === "en" ? "Browser-only demo" : "仅浏览器演示"}</b>
+            <b>{locale === "en" ? "Browser-only preview" : "仅浏览器内模拟"}</b>
             <span>
               {locale === "en" ? "No publishing backend" : "无发布后台"}
             </span>
@@ -4134,7 +3816,7 @@ function AdminPage({
                 onClick={openEditor}
               >
                 <Icon name="file" />
-                {locale === "en" ? "Edit demo draft" : "编辑演示草稿"}
+                {locale === "en" ? "Edit preview draft" : "编辑预览草稿"}
               </button>
               <button
                 className="btn btn-primary"
@@ -4142,10 +3824,10 @@ function AdminPage({
                   setNotice(
                     bilingualReviewed && contentReviewed
                       ? locale === "en"
-                        ? "Reviewed demo draft published in this screen only. No production content changed."
+                        ? "Reviewed preview draft published in this screen only. No production content changed."
                         : "已在当前页面模拟发布经审核草稿，未修改任何生产内容。"
                       : locale === "en"
-                        ? "Demo publish blocked: complete bilingual and content review first."
+                        ? "Preview publish blocked: complete bilingual and content review first."
                         : "模拟发布已阻止：请先完成双语与内容审核。",
                   )
                 }
@@ -4182,8 +3864,8 @@ function AdminPage({
               <b>{locale === "en" ? "Content review" : "内容审核"}</b>
               {contentReviewed
                 ? locale === "en"
-                  ? "Approved in demo"
-                  : "演示中已批准"
+                  ? "Approved in preview"
+                  : "模拟审核通过"
                 : locale === "en"
                   ? "Draft"
                   : "草稿"}
@@ -4222,7 +3904,7 @@ function AdminPage({
             </button>
             <DemoBadge locale={locale} compact />
             <h2 id="admin-editor-title">
-              {locale === "en" ? "Edit a browser-only demo draft" : "编辑仅浏览器演示草稿"}
+              {locale === "en" ? "Edit a browser-only preview draft" : "编辑仅浏览器预览草稿"}
             </h2>
             <p>
               {locale === "en"
@@ -4260,12 +3942,12 @@ function AdminPage({
                 setEditorOpen(false);
                 setNotice(
                   locale === "en"
-                    ? "Demo draft saved in the current screen."
-                    : "演示草稿已保存在当前页面。",
+                    ? "Preview draft saved in the current screen."
+                    : "预览草稿已保存在当前页面。",
                 );
               }}
             >
-              {locale === "en" ? "Save demo draft" : "保存演示草稿"}
+              {locale === "en" ? "Save preview draft" : "保存预览草稿"}
             </button>
           </section>
         </div>
@@ -4352,7 +4034,7 @@ function RulesView({ locale }: { locale: Locale }) {
         items={[
           [
             "8",
-            locale === "en" ? "Active demo rules" : "启用的演示规则",
+            locale === "en" ? "Active preview rules" : "启用的预览规则",
             "blue",
           ],
           ["8/8", locale === "en" ? "Reviewed" : "已审核", "teal"],
@@ -4546,7 +4228,7 @@ function ReferralsView({
         items={[
           [
             String(state.referrals.length),
-            locale === "en" ? "Local demo referrals" : "本地演示转介",
+            locale === "en" ? "Local preview referrals" : "本地模拟转介",
             "blue",
           ],
           [
@@ -4603,7 +4285,7 @@ function ReferralsView({
               </span>
               <span>
                 <i className="verified-dot" />
-                {locale === "en" ? "Demo received" : "演示已接收"}
+                {locale === "en" ? "Simulated receipt" : "已生成模拟接收记录"}
               </span>
             </div>
           ))}
@@ -4617,19 +4299,21 @@ export function LaunchpadApp({ locale, path = [] }: PageProps) {
   const { state, commit, hydrated } = useDemoState();
   useEffect(() => {
     document.documentElement.lang = locale === "zh" ? "zh-Hans" : "en-CA";
-    document.documentElement.dataset.launchpadReady = "true";
+    if (hydrated) document.documentElement.dataset.launchpadReady = "true";
     return () => {
       delete document.documentElement.dataset.launchpadReady;
     };
-  }, [locale]);
+  }, [locale, hydrated]);
   const page = path[0] ?? "home";
+  if (page === "launch") return <BusinessWorkspace locale={locale} />;
+  if (page === "present") return <PresentationPage locale={locale} />;
   let content: React.ReactNode;
   if (page === "home") content = <HomePage locale={locale} />;
   else if (page === "product") content = <ProductPage locale={locale} />;
   else if (page === "partners") content = <PartnersPage locale={locale} />;
   else if (page === "demo")
     content = <DemoPage locale={locale} state={state} commit={commit} />;
-  else if (page === "assessment")
+  else if (page === "sample-assessment")
     content = (
       <AssessmentPage
         locale={locale}
@@ -4654,6 +4338,7 @@ export function LaunchpadApp({ locale, path = [] }: PageProps) {
         locale={locale}
         taskId={path[1] ?? "choose-structure"}
         state={state}
+        hydrated={hydrated}
         commit={commit}
       />
     );

@@ -4,11 +4,11 @@ import "../globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(
-    "https://canada-business-launchpad-demo-2026.aideptus3.chatgpt.site",
+    "https://canada-business-launchpad-start.aideptus2apple.chatgpt.site",
   ),
   title: "Canada Business Launchpad | Ontario Pilot",
   description:
-    "A source-backed planning and progress workspace for starting and operating an Ontario small business.",
+    "Startup steps, useful services and your own progress. A simple Ontario business launch checklist for small teams.",
   icons: {
     icon: "/favicon.svg",
     shortcut: "/favicon.svg",
@@ -21,14 +21,14 @@ export const metadata: Metadata = {
     type: "website",
     title: "Canada Business Launchpad | Ontario Pilot",
     description:
-      "Your verified Ontario business plan, in one workspace. External Demo MVP v0.1.",
+      "Your startup steps, related services and personal progress in one place.",
     images: [{ url: "/og.png", width: 1200, height: 630 }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Canada Business Launchpad | Ontario Pilot",
     description:
-      "Your verified Ontario business plan, in one workspace. External Demo MVP v0.1.",
+      "Your startup steps, related services and personal progress in one place.",
     images: ["/og.png"],
   },
 };

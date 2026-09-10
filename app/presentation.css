@@ -1,0 +1,174 @@
+/* A projection-friendly narrative surface beside the existing working surface. */
+.presentation-root { background: var(--present-canvas); color: var(--ink); min-height: 100vh; font-size: 16px; }
+.present-header { min-height: 82px; background: #fff; border-bottom: 1px solid var(--present-border); display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 28px; }
+.present-brand { display: flex; align-items: center; gap: 12px; font-size: 14px; line-height: 1.35; }
+.present-brand .brand-mark { flex-shrink: 0; font-weight: 800; }
+.present-disclaimer { max-width: 310px; font-size: 12px; letter-spacing: .06em; color: var(--muted); text-align: center; }
+.present-tools { display: flex; gap: 6px; align-items: center; }
+.present-tool { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 42px; border: 1px solid transparent; padding: 8px 10px; background: transparent; border-radius: 8px; cursor: pointer; font-size: 14px; }
+.present-tool:hover, .present-tool[aria-pressed="true"] { background: var(--blue-100); color: var(--blue-700); }
+.present-tool.icon-only { width: 42px; padding: 8px; }
+.present-body { display: grid; grid-template-columns: 248px minmax(0, 1fr); max-width: 1740px; margin: auto; }
+.present-sidebar { padding: 32px 22px; background: var(--navy-950); color: #fff; display: flex; flex-direction: column; min-height: calc(100vh - 82px); }
+.present-eyebrow { display: block; font-size: 12px; font-weight: 800; letter-spacing: .12em; color: var(--blue-700); margin-bottom: 12px; }
+.present-sidebar .present-eyebrow { color: var(--gold-400); }
+.present-sidebar-intro h2 { font-size: 25px; line-height: 1.25; letter-spacing: -.02em; margin: 0 0 12px; }
+.present-sidebar-intro p { font-size: 14px; color: #c4d3e6; margin: 0 0 28px; }
+.present-audience { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid #466180; padding: 4px; border-radius: 9px; margin-bottom: 26px; }
+.present-audience button { border: 0; background: transparent; color: #d1dceb; border-radius: 5px; font-size: 14px; padding: 10px 4px; cursor: pointer; }
+.present-audience button[aria-pressed="true"] { background: #fff; color: var(--navy-950); font-weight: 700; }
+.present-chapters { display: grid; gap: 7px; }
+.present-chapters button { display: flex; align-items: center; gap: 12px; min-height: 51px; color: #c7d6e8; background: transparent; border: 1px solid transparent; text-align: left; border-radius: 8px; padding: 12px; font-size: 14px; cursor: pointer; }
+.present-chapters button > span { font-variant-numeric: tabular-nums; font-size: 12px; }
+.present-chapters button > svg { margin-left: auto; }
+.present-chapters button:hover { background: #142d4c; }
+.present-chapters button[aria-current] { border-color: #527caa; background: #17395f; color: #fff; }
+.present-session { margin-top: auto; padding-top: 40px; }
+.present-session > span { font-size: 12px; letter-spacing: .1em; color: #bbcadc; }
+.present-session > div { display: flex; align-items: center; justify-content: space-between; }
+.present-session output { font-size: 32px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.present-session .present-tool { color: #fff; }
+.present-session .present-tool:hover { color: var(--navy-950); }
+.present-session p { font-size: 12px; color: #bbcce1; line-height: 1.7; }
+.present-reset { display: inline-flex; align-items: center; gap: 7px; padding: 8px 0; font-size: 14px; border: 0; color: #e0eafa; background: none; cursor: pointer; }
+.present-main { padding: 36px clamp(22px, 3.6vw, 66px) 22px; min-width: 0; }
+.present-chapter-heading { max-width: 920px; }
+.present-chapter-heading h1 { font-size: clamp(28px, 3.15vw, 48px); line-height: 1.15; letter-spacing: -.04em; margin: 0 0 17px; outline: none; }
+.present-chapter-heading > p { color: var(--muted); font-size: 17px; max-width: 830px; margin: 0 0 28px; }
+.present-scene { animation: present-enter .22s ease-out; }
+@keyframes present-enter { from { opacity: .3; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+.present-concept, .present-plan-layout, .present-profile-layout, .present-trust-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.present-before, .present-after, .present-profile-result, .present-action, .present-plan-list, .present-rehearsal, .present-consent, .present-scope { padding: 28px; background: #fff; border: 1px solid var(--present-border); border-radius: 16px; min-width: 0; }
+.presentation-root h2 { margin-top: 0; font-size: 25px; letter-spacing: -.025em; line-height: 1.3; }
+.presentation-root h3 { font-size: 18px; margin: 0 0 14px; line-height: 1.4; }
+.presentation-root p { line-height: 1.7; }
+.present-before { border-style: dashed; background: #f8fafc; }
+.present-before > p, .present-after > p { font-size: 14px; margin-bottom: 0; }
+.present-fragments { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 28px 0; }
+.present-fragments span { padding: 15px; border: 1px solid var(--present-border); border-radius: 7px; background: #fff; font-size: 14px; display: flex; justify-content: space-between; gap: 8px; }
+.present-fragments svg { flex-shrink: 0; color: var(--muted); }
+.present-after { background: var(--navy-900); color: #fff; border-color: var(--navy-900); }
+.present-after .present-eyebrow { color: var(--gold-400); }
+.present-after ol { list-style: none; padding: 0; display: grid; gap: 12px; margin: 26px 0; }
+.present-after li { display: flex; align-items: center; gap: 14px; }
+.present-after li span { display: grid; place-items: center; width: 31px; height: 31px; border: 1px solid #5478a0; color: var(--gold-400); border-radius: 50%; font-size: 14px; flex-shrink: 0; }
+.present-after > p { color: #cddbef; }
+.present-takeaway { border-left: 4px solid var(--gold-500); background: #fff; margin-top: 23px; padding: 17px 22px; display: flex; align-items: baseline; gap: 24px; }
+.present-takeaway > span { font-size: 12px; letter-spacing: .06em; font-weight: 800; color: var(--gold-600); flex-shrink: 0; }
+.present-takeaway p { margin: 0; font-size: 16px; }
+.present-notes { border: 1px solid #d8b974; background: #fff7e6; padding: 18px 20px; margin-top: 16px; display: flex; gap: 15px; font-size: 14px; border-radius: 9px; }
+.present-notes svg { flex-shrink: 0; margin-top: 2px; }
+.present-notes p { margin: 7px 0 0; }
+.present-footer { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 24px; }
+.present-footer > span { font-size: 12px; color: var(--muted); }
+.present-footer > div { display: flex; gap: 10px; }
+.presentation-root button:disabled { opacity: .55; cursor: not-allowed; }
+.presentation-root .btn { font-size: 14px; min-height: 44px; white-space: normal; text-align: center; }
+.presentation-root .text-link { font-size: 14px; }
+.present-profile-options { display: grid; gap: 10px; }
+.present-profile { display: flex; align-items: center; gap: 14px; background: #fff; text-align: left; border: 1px solid var(--present-border); padding: 13px 16px; border-radius: 10px; cursor: pointer; min-width: 0; }
+.present-profile.selected { border-color: var(--blue-700); box-shadow: 0 0 0 1px var(--blue-700); background: var(--blue-50); }
+.present-profile > span { font-size: 14px; color: var(--blue-700); }
+.present-profile div { min-width: 0; flex: 1; }
+.present-profile b { display: block; font-size: 14px; }
+.present-profile small { display: block; font-size: 12px; color: var(--muted); margin-top: 4px; }
+.present-profile svg { color: var(--blue-700); flex-shrink: 0; }
+.present-counts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px 0; }
+.present-counts div { background: var(--surface-muted); padding: 13px; border-radius: 9px; }
+.present-counts b { display: block; font-size: 34px; letter-spacing: -.04em; }
+.present-counts span { font-size: 14px; color: var(--muted); }
+.present-footnote { font-size: 13px; color: var(--muted); }
+.present-plan-layout { grid-template-columns: .85fr 1.15fr; }
+.present-progress-number { font-size: 62px; font-weight: 750; color: var(--blue-700); line-height: 1.3; font-variant-numeric: tabular-nums; letter-spacing: -.05em; }
+.present-progress-number span { font-size: 24px; margin-left: 5px; }
+.present-phase-strip { display: flex; gap: 5px; padding: 0 0 18px; }
+.present-phase-strip div { flex: 1; min-width: 0; padding: 8px 5px; text-align: center; background: var(--surface-muted); font-size: 12px; }
+.present-phase-strip b, .present-phase-strip span { display: block; }
+.present-phase-strip span { color: var(--muted); margin-top: 3px; }
+.present-task-row { display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--line); padding: 13px 0; }
+.present-task-row > span:first-child { font-size: 12px; color: var(--muted); }
+.present-task-row div { flex: 1; min-width: 0; }
+.present-task-row b { font-size: 14px; display: block; }
+.present-task-row small { color: var(--muted); font-size: 12px; display: block; margin-top: 4px; }
+.present-task-row .kind-pill { font-size: 12px; text-align: center; white-space: normal; }
+.present-rehearsal-top { display: flex; justify-content: space-between; gap: 15px; margin-bottom: 5px; }
+.present-rehearsal-top > span:last-child { font-size: 13px; color: var(--muted); }
+.present-handoff-steps { list-style: none; display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 0; margin: 24px 0; }
+.present-handoff-steps li { border-bottom: 3px solid var(--line); padding-bottom: 13px; display: flex; align-items: center; gap: 9px; font-size: 14px; color: var(--muted); }
+.present-handoff-steps li > span { width: 25px; height: 25px; border-radius: 50%; background: var(--surface-muted); display: grid; place-items: center; font-size: 12px; flex-shrink: 0; }
+.present-handoff-steps li.reached { border-color: var(--teal-600); color: var(--teal-600); }
+.present-handoff-steps li.reached span { background: var(--teal-100); }
+.present-rehearsal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
+.present-rehearsal-grid > aside { border-left: 1px solid var(--line); padding-left: 28px; }
+.present-rehearsal-grid > aside > p { font-size: 14px; }
+.present-checklist { display: grid; gap: 14px; margin: 22px 0; }
+.present-checklist label, .present-consent-check { display: flex; gap: 12px; align-items: flex-start; font-size: 16px; cursor: pointer; }
+.present-checklist input, .present-consent-check input { width: 19px; height: 19px; flex-shrink: 0; accent-color: var(--blue-700); margin-top: 3px; }
+.present-task-facts div { display: grid; grid-template-columns: 50px 1fr; gap: 10px; padding: 8px 0; font-size: 14px; border-bottom: 1px solid var(--line); }
+.present-task-facts dt { color: var(--muted); }
+.present-task-facts dd { margin: 0; }
+.present-source-list { margin: 18px 0; display: grid; gap: 10px; }
+.present-source-list a { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 14px; color: var(--blue-700); text-decoration: underline; text-underline-offset: 3px; }
+.present-source-list small { display: block; color: var(--muted); font-size: 12px; margin-top: 6px; }
+.present-source-list svg { flex-shrink: 0; }
+.present-rehearsal .text-link { display: flex; margin-top: 14px; }
+.present-receipt { padding: 22px; background: var(--surface-muted); border: 1px dashed var(--line-dark); border-radius: 12px; display: grid; gap: 9px; margin: 18px 0; overflow-wrap: anywhere; }
+.present-receipt strong { font-size: 22px; color: var(--navy-800); }
+.present-receipt span, .present-receipt small { font-size: 14px; }
+.present-obligations { display: grid; gap: 8px; }
+.present-obligations span { display: block; border-left: 3px solid var(--gold-500); padding: 5px 12px; background: var(--surface-muted); font-size: 14px; }
+.present-boundary { padding: 22px 0; max-width: 700px; }
+.present-consent ul { padding-left: 20px; font-size: 16px; line-height: 1.9; }
+.present-consent-check { margin: 22px 0; font-size: 14px; }
+.present-scope > div { padding: 18px 0; border-bottom: 1px solid var(--line); }
+.present-scope > div b { color: var(--blue-700); font-size: 12px; letter-spacing: .08em; }
+.present-scope > div p { margin: 5px 0 0; font-size: 16px; }
+.present-scope .text-link { margin-top: 22px; }
+.present-notice { color: var(--teal-600); background: var(--teal-100); padding: 12px 15px; font-size: 14px; border-radius: 8px; }
+.present-print-handout { display: none; }
+
+.milestone-map { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; margin: 22px 0; }
+.milestone-map button { padding: 16px; background: #fff; border: 1px solid var(--line); border-radius: 9px; text-align: left; cursor: pointer; font-size: 14px; }
+.milestone-map button[aria-pressed="true"] { border-color: var(--blue-700); background: var(--blue-50); }
+.milestone-map button > b { float: right; color: var(--muted); }
+.milestone-track { display: block; clear: both; height: 4px; background: var(--line); margin-top: 14px; overflow: hidden; border-radius: 3px; }
+.milestone-track i { height: 100%; display: block; background: var(--teal-600); }
+.workflow-waiting, .workflow-records { padding: 23px; border: 1px solid var(--line); background: #fff; border-radius: 12px; margin: 22px 0; scroll-margin-top: 30px; }
+.workflow-waiting > div { display: flex; align-items: center; gap: 12px; }
+.workflow-waiting h2, .workflow-records h2 { font-size: 20px; margin: 0; }
+.workflow-waiting p, .workflow-records > p { font-size: 14px; color: var(--muted); margin: 8px 0 14px; }
+.workflow-waiting > a, .workflow-records > a { display: flex; align-items: center; gap: 12px; padding: 14px 0; border-top: 1px solid var(--line); font-size: 14px; }
+.workflow-waiting > a > span, .workflow-records > a > span { flex: 1; min-width: 0; }
+.workflow-records small { display: block; font-size: 13px; color: var(--muted); margin-top: 5px; overflow-wrap: anywhere; }
+.workflow-records svg { color: var(--teal-600); flex-shrink: 0; }
+.workflow-outcome { display: flex; gap: 18px; align-items: flex-start; background: #edf8f5; border: 1px solid #b8dacf; border-radius: 12px; padding: 25px; margin: 22px 0; }
+.workflow-outcome > svg { color: var(--teal-600); flex-shrink: 0; margin-top: 4px; }
+.workflow-outcome h2 { font-size: 23px; margin: 0 0 8px; }
+.workflow-outcome p { font-size: 15px; color: #344c49; overflow-wrap: anywhere; }
+.workflow-outcome .eyebrow { color: var(--teal-600); }
+.outcome-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; }
+.phase-filter-note { display: flex; align-items: center; gap: 18px; padding: 12px 0 18px; font-size: 14px; }
+.phase-filter-note button, .handoff-record-actions .text-link { background: transparent; border: 0; cursor: pointer; }
+.workflow-empty { padding: 20px; font-size: 15px; color: var(--muted); }
+.task-handoff-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 24px 0; }
+.handoff-state-note { margin-top: 24px; font-size: 13px; color: var(--muted); }
+.task-handoff-strip > div { display: flex; align-items: center; gap: 10px; padding: 14px 10px; border-bottom: 3px solid var(--line); color: var(--muted); font-size: 14px; }
+.task-handoff-strip > div.reached { color: var(--teal-600); border-color: var(--teal-600); }
+.task-handoff-strip span { background: var(--surface-muted); border: 1px solid var(--line); width: 25px; height: 25px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0; font-size: 12px; }
+.handoff-record-actions { padding-bottom: 24px; margin-bottom: 24px; border-bottom: 1px solid var(--line); }
+.handoff-record-actions h3 { font-size: 19px; margin: 0 0 8px; }
+.handoff-record-actions .text-link { display: block; padding: 14px 0 0; }
+.evidence-form > .btn-outline { align-self: flex-start; width: fit-content; }
+
+@media (min-width: 1600px) { .present-main { padding-top: 55px; } .present-chapter-heading { margin-bottom: 32px; } .present-scene { min-height: 455px; } }
+@media (max-width: 1100px) { .present-body { grid-template-columns: 210px minmax(0, 1fr); } .present-sidebar { padding: 26px 15px; } .present-main { padding: 28px 22px; } .present-disclaimer { max-width: 190px; } .present-concept, .present-plan-layout, .present-profile-layout, .present-trust-layout { gap: 14px; } .present-before, .present-after, .present-profile-result, .present-action, .present-plan-list, .present-rehearsal, .present-consent, .present-scope { padding: 22px; } .present-fragments { grid-template-columns: 1fr; gap: 9px; } .present-fragments span { padding: 11px; } .present-task-row { flex-wrap: wrap; } .present-task-row .kind-pill { margin-left: 24px; } .present-rehearsal-grid { gap: 20px; } .present-rehearsal-grid > aside { padding-left: 20px; } .present-handoff-steps { grid-template-columns: 1fr 1fr; } .milestone-map button { padding: 12px; } .milestone-map button > b { float: none; display: block; margin-top: 4px; } }
+@media (max-width: 800px) { .present-header { flex-wrap: wrap; padding: 14px 20px; gap: 12px; } .present-disclaimer { max-width: 230px; margin-left: auto; text-align: right; } .present-tools { width: 100%; justify-content: flex-end; border-top: 1px solid var(--line); padding-top: 7px; } .present-body { display: block; } .present-sidebar { min-height: auto; padding: 18px 20px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px; } .present-sidebar-intro h2, .present-sidebar-intro p, .present-session { display: none; } .present-sidebar-intro .present-eyebrow { margin: 13px 0; } .present-audience { margin: 0; } .present-chapters { grid-column: 1 / -1; grid-template-columns: repeat(3, 1fr); gap: 6px; } .present-chapters button { min-height: 44px; padding: 9px; gap: 8px; } .present-chapters button > svg { display: none; } .present-main { padding: 28px 20px; } .present-plan-layout { grid-template-columns: .9fr 1.1fr; } .present-footer { flex-wrap: wrap; } .present-footer > div { margin-left: auto; } .present-takeaway { display: block; } .present-takeaway > span { display: block; margin-bottom: 8px; } }
+@media (max-width: 580px) { .present-header { padding: 12px 16px; } .present-brand { font-size: 12px; } .present-brand .brand-mark { width: 37px; height: 37px; } .present-disclaimer { max-width: 150px; font-size: 12px; } .present-tools { justify-content: space-between; gap: 2px; } .present-tool { font-size: 13px; padding: 8px; } .present-sidebar { padding: 14px 16px; grid-template-columns: 1fr; gap: 10px; } .present-sidebar-intro { display: none; } .present-chapters { grid-column: auto; } .present-chapters button { font-size: 12px; gap: 5px; padding: 8px 6px; } .present-chapters button > span { font-size: 12px; } .present-main { padding: 26px 16px; } .present-chapter-heading h1 { font-size: 30px; } .present-chapter-heading > p { font-size: 16px; } .present-concept, .present-plan-layout, .present-profile-layout, .present-trust-layout, .present-rehearsal-grid { grid-template-columns: 1fr; } .present-rehearsal-grid > aside { padding: 20px 0 0; border-left: 0; border-top: 1px solid var(--line); } .present-rehearsal-top { display: block; margin-bottom: 17px; } .present-rehearsal-top .present-eyebrow { margin-bottom: 6px; } .present-takeaway { padding: 16px; } .present-footer > div { width: 100%; justify-content: space-between; } .present-footer .btn { font-size: 14px; padding-inline: 13px; } .present-notes { padding: 15px; } .present-notes > svg { display: none; } .milestone-map { grid-template-columns: repeat(3, 1fr); gap: 8px; } .task-handoff-strip { grid-template-columns: repeat(2, 1fr); } .workflow-outcome { padding: 18px; gap: 12px; } .workflow-outcome h2 { font-size: 20px; } .workflow-waiting > a { flex-wrap: wrap; } .workflow-waiting > a > span { flex-basis: 100%; } .phase-filter-note { flex-wrap: wrap; gap: 8px; } }
+@media (prefers-reduced-motion: reduce) { .present-scene { animation: none; } }
+@media (max-width: 800px) {
+  .present-session { display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 0; margin: 0; grid-column: 1 / -1; }
+  .present-session > span, .present-session > p { display: none; }
+  .present-session > div { gap: 12px; }
+  .present-session output { font-size: 24px; }
+}
+@media print { .presentation-root > .present-header, .presentation-root > .present-body { display: none !important; } .presentation-root, body { background: #fff; } .present-print-handout { display: block; font-size: 11pt; padding: 0; color: #102e55; } .present-print-handout h1 { font-size: 24pt; margin-bottom: 8pt; } .present-print-handout h2 { font-size: 14pt; margin: 15pt 0 5pt; } .present-print-handout section { break-inside: avoid; } .present-print-handout p { margin: 6pt 0; line-height: 1.45; } @page { size: A4; margin: 16mm; } }

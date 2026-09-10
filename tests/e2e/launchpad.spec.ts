@@ -7,14 +7,14 @@ async function waitForApp(page: Page) {
 }
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("/en");
+  await page.goto("/en/overview");
   await page.evaluate((key) => window.localStorage.removeItem(key), STORAGE_KEY);
 });
 
-test("homepage to demo to workspace to task is a complete golden path", async ({
+test("homepage to preview to workspace to task is a complete golden path", async ({
   page,
 }) => {
-  await page.getByRole("link", { name: "Demo", exact: true }).click();
+  await page.getByRole("link", { name: "Examples", exact: true }).click();
   await expect(page).toHaveURL(/\/en\/demo$/);
 
   const scenario = page
@@ -23,7 +23,7 @@ test("homepage to demo to workspace to task is a complete golden path", async ({
   await scenario.getByRole("link", { name: "Launch this journey" }).click();
 
   await expect(page).toHaveURL(/\/en\/workspace\/toronto-consultant$/);
-  await expect(page.getByRole("heading", { name: "Good morning, Alex." })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Your next milestone." })).toBeVisible();
 
   await page.getByRole("link", { name: "Edit" }).click();
   await expect(page.getByRole("radio", { name: "Sole proprietorship" })).toHaveClass(
@@ -43,7 +43,7 @@ test("homepage to demo to workspace to task is a complete golden path", async ({
 test("assessment preserves dynamic answers, recalculates tasks and persists progress", async ({
   page,
 }) => {
-  await page.goto("/en/assessment");
+  await page.goto("/en/sample-assessment");
   await waitForApp(page);
   await page.getByRole("radio", { name: "Ontario corporation" }).click();
   await page.getByRole("radio", { name: "Near CAD 30,000" }).click();
@@ -82,7 +82,7 @@ test("assessment preserves dynamic answers, recalculates tasks and persists prog
   ).toHaveValue("done");
 
   await page.getByRole("link", { name: "Edit" }).click();
-  await expect(page).toHaveURL(/\/en\/assessment$/);
+  await expect(page).toHaveURL(/\/en\/sample-assessment$/);
   await expect(page.getByRole("radio", { name: "Ontario corporation" })).toHaveClass(
     /selected/,
   );
@@ -123,7 +123,7 @@ test("provider handoff requires explicit consent and records only a local simula
   await page.getByRole("textbox", { name: "Search service category" }).fill("official");
   await expect(page.locator("article.provider-card")).toHaveCount(2);
   await page.getByRole("textbox", { name: "Search service category" }).fill("");
-  await page.getByRole("button", { name: "Review demo handoff" }).first().click();
+  await page.getByRole("button", { name: "Review simulated handoff" }).first().click();
 
   const dialog = page.getByRole("dialog");
   await expect(dialog.getByRole("heading", { name: "Review before sharing" })).toBeVisible();
@@ -133,7 +133,7 @@ test("provider handoff requires explicit consent and records only a local simula
   await expect(submit).toBeEnabled();
   await submit.click();
 
-  await expect(dialog.getByRole("heading", { name: "Demo handoff received" })).toBeVisible();
+  await expect(dialog.getByRole("heading", { name: "Simulated handoff received" })).toBeVisible();
   const referralCount = await page.evaluate((key) => {
     const state = JSON.parse(window.localStorage.getItem(key) ?? "{}");
     return state.referrals?.length ?? 0;
@@ -160,7 +160,7 @@ test("materials persist and gate the official handoff", async ({ page }) => {
 
 test("support handoff cannot be prepared without consent", async ({ page }) => {
   await page.goto("/en/support#expert");
-  const submit = page.getByRole("button", { name: "Prepare demo request" });
+  const submit = page.getByRole("button", { name: "Prepare sample request" });
   await expect(submit).toBeDisabled();
   await page.getByRole("checkbox").check();
   await expect(submit).toBeEnabled();
@@ -172,16 +172,16 @@ test("admin draft editing and publish review remain browser-only simulations", a
   await page.goto("/en/admin/sources");
   await waitForApp(page);
   await page.getByRole("button", { name: "Simulate publish" }).click();
-  await expect(page.getByText(/Demo publish blocked/)).toBeVisible();
+  await expect(page.getByText(/Preview publish blocked/)).toBeVisible();
 
-  await page.getByRole("button", { name: "Edit demo draft" }).click();
-  const editor = page.getByRole("dialog", { name: "Edit a browser-only demo draft" });
+  await page.getByRole("button", { name: "Edit preview draft" }).click();
+  const editor = page.getByRole("dialog", { name: "Edit a browser-only preview draft" });
   const background = page.locator(".admin-page > div[inert]");
   await expect(background).toHaveAttribute("aria-hidden", "true");
   await editor.getByRole("checkbox", { name: "English and Chinese reviewed" }).check();
   await editor.getByRole("button", { name: "Close editor" }).click();
 
-  await page.getByRole("button", { name: "Edit demo draft" }).click();
+  await page.getByRole("button", { name: "Edit preview draft" }).click();
   await expect(
     editor.getByRole("checkbox", { name: "English and Chinese reviewed" }),
   ).not.toBeChecked();
@@ -189,9 +189,9 @@ test("admin draft editing and publish review remain browser-only simulations", a
   await editor
     .getByRole("checkbox", { name: "Source and professional boundary reviewed" })
     .check();
-  await editor.getByRole("button", { name: "Save demo draft" }).click();
+  await editor.getByRole("button", { name: "Save preview draft" }).click();
   await page.getByRole("button", { name: "Simulate publish" }).click();
-  await expect(page.getByText(/Reviewed demo draft published/)).toBeVisible();
+  await expect(page.getByText(/Reviewed preview draft published/)).toBeVisible();
 });
 
 async function getContrastViolations(page: Page, path: string) {
@@ -297,6 +297,9 @@ test("core content text meets WCAG AA contrast thresholds", async ({ page }) => 
     "/en/assistant",
     "/en/admin/sources",
     "/zh/workspace/service-corporation",
+    "/en/present?chapter=1",
+    "/en/present?chapter=4",
+    "/zh/present?chapter=6",
   ]) {
     violations.push(...(await getContrastViolations(page, path)).map((item) => ({ path, ...item })));
   }
@@ -338,6 +341,14 @@ for (const viewport of [
       "/en/tasks/choose-structure",
       "/en/providers",
       "/en/calendar",
+      "/en/present?chapter=1",
+      "/en/present?chapter=2",
+      "/en/present?chapter=3",
+      "/en/present?chapter=4",
+      "/en/present?chapter=5",
+      "/en/present?chapter=6",
+      "/zh/present?chapter=1",
+      "/zh/present?chapter=6",
     ]) {
       await expectNoHorizontalOverflow(page, path);
     }

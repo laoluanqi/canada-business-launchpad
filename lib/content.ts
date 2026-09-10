@@ -543,8 +543,8 @@ export const tasks: TaskDefinition[] = [
     "register",
     "Verify an existing Ontario registration",
     "核验现有安省注册",
-    "Confirm that the registration is active and record only the existence or recovery status of the Ontario BIN and Company Key. Do not enter either value in this demo.",
-    "确认注册状态有效，并仅记录Ontario BIN及Company Key是否已取得或可找回；请勿在本演示中输入这些具体值。",
+    "Confirm that the registration is active and record only the existence or recovery status of the Ontario BIN and Company Key. Do not enter either value in this preview.",
+    "确认注册状态有效，并仅记录Ontario BIN及Company Key是否已取得或可找回；请勿在本预览中输入这些具体值。",
     ["on-register", "obr"],
     ["registration", "ontario", "review"],
   ),
@@ -1422,12 +1422,12 @@ const providerRecords: Provider[] = [
     type: "demo_partner",
     category: bi("Bookkeeping", "记账服务"),
     description: bi(
-      "Fictional demo provider for monthly bookkeeping setup and milestone support.",
+      "Fictional preview provider for monthly bookkeeping setup and milestone support.",
       "用于展示月度记账设置和里程碑支持的虚构服务商。",
     ),
     region: bi("Ontario — remote", "安省——远程服务"),
     price: bi("Illustrative: from CAD 249/month", "示例：CAD 249/月起"),
-    priceSource: bi("Demo data — not a quote", "演示数据——并非报价"),
+    priceSource: bi("Sample data — not a quote", "样例数据——并非报价"),
     verified: "2026-09-04",
     website: "#referral",
     sharedFields: [
@@ -1436,8 +1436,8 @@ const providerRecords: Provider[] = [
       bi("Preferred contact email", "首选联系邮箱"),
     ],
     commercialDisclosure: bi(
-      "Demo only. A future agreement may compensate Launchpad for a qualified introduction.",
-      "仅供演示。未来签署合作协议后，Launchpad可能因有效转介获得报酬。",
+      "Preview only. A future agreement may compensate Launchpad for a qualified introduction.",
+      "仅供展示。未来签署合作协议后，Launchpad可能因有效转介获得报酬。",
     ),
   },
   {
@@ -1447,13 +1447,13 @@ const providerRecords: Provider[] = [
     category: bi("Business insurance", "商业保险"),
     description: bi(
       "Fictional sponsored listing demonstrating a transparent broker handoff.",
-      "虚构赞助展示，用于演示透明的保险经纪转介。",
+      "虚构赞助位，用于说明保险经纪转介中的透明披露方式。",
     ),
     region: bi("Ontario", "安省"),
     price: bi("Quote required", "需要报价"),
     priceSource: bi(
-      "Provider underwriting — no quote in this demo",
-      "由服务商核保——本演示不提供报价",
+      "Provider underwriting — no quote in this preview",
+      "由服务商核保——本预览不提供报价",
     ),
     verified: "2026-09-04",
     website: "#referral",
@@ -1464,8 +1464,8 @@ const providerRecords: Provider[] = [
       bi("Preferred contact email", "首选联系邮箱"),
     ],
     commercialDisclosure: bi(
-      "Sponsored demo placement. No real commercial relationship exists in this prototype.",
-      "赞助位演示。本原型不存在真实商业合作关系。",
+      "Simulated sponsorship placement. No real commercial relationship exists in this prototype.",
+      "模拟赞助位。本原型不存在真实商业合作关系。",
     ),
   },
   {
@@ -1554,7 +1554,7 @@ export const calendarEvents: CalendarEvent[] = [
     type: "corporate",
     title: bi("Ontario corporate annual return", "安省公司年度申报"),
     note: bi(
-      "Registry filing — not a tax return. Illustrative deadline for the demo's October 31 fiscal year-end.",
+      "Registry filing — not a tax return. Illustrative deadline for the preview's October 31 fiscal year-end.",
       "公司注册处申报——并非税务申报。示例按10月31日财年末计算截止日。",
     ),
     sourceId: "obr",

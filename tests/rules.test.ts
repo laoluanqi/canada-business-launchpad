@@ -227,6 +227,7 @@ test("employees or an Ontario facility trigger sole-proprietor registration", ()
   ] as const) {
     const scenario = synthesizeAssessmentScenario({
       city: "Ontario",
+      registrationStatus: "unsure",
       industry: "services",
       structure: "sole_prop",
       businessNameUse: "legal_name",

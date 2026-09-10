@@ -10,10 +10,12 @@
     "build": "vinext build",
     "start": "vinext start",
     "test": "npm run build && npm run test:unit && node --test tests/rendered-html.test.mjs",
-    "test:unit": "node --import tsx --test tests/rules.test.ts",
+    "test:unit": "node --import tsx --test tests/rules.test.ts tests/workflow.test.ts tests/business.test.ts tests/launchpad-progress.test.ts",
+    "typecheck": "tsc --noEmit --incremental false",
     "test:e2e": "playwright test",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "drizzle-kit generate",
+    "db:local": "wrangler d1 migrations apply DB --local --config wrangler.local.json --persist-to .wrangler/state"
   },
   "dependencies": {
     "drizzle-orm": "0.45.2",

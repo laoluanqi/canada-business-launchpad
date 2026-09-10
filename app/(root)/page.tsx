@@ -1,5 +1,5 @@
-import { LaunchpadApp } from "@/components/LaunchpadApp";
+import { LaunchpadSimple } from "@/components/LaunchpadSimple";
 
 export default function Home() {
-  return <LaunchpadApp locale="en" path={[]} />;
+  return <LaunchpadSimple locale="en" />;
 }
